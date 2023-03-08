@@ -17,6 +17,11 @@ preproc:
   - fft
 
 # -------------------
+# The method to fill missing temporal data
+# -------------------
+missing_fill_method: linear
+
+# -------------------
 # Regions to be included in the study
 # if null then all regions will be used
 # -------------------

@@ -42,7 +42,7 @@ def data_preproc(data: DataFrame, preproc_steps: list or None, preproc_method: s
 
         return smoothed_data
 
-    data["data"] = data[["case_7d_avg"]]
+    data["data"] = data[["copies_per_day_per_person"]]
     if preproc_steps is None:
         return data
 
@@ -112,14 +112,13 @@ def rank_comp(comp_results: dict, top_num: int = 5) -> dict:
     return highest_corr_locations
 
 
-def get_regional_ts_comparison(data: DataFrame, method: str, preproc: list or None):
+def get_regional_ts_comparison(data: DataFrame, method: str, preproc: list or None, missing_fill_method: str):
     """Get the region timeseries correlation
 
     Args:
         data (DataFrame): data to be processed
         preproc_flag (bool, optional): whether apply preprocessing on the data. Defaults to True.
     """
-
 
     def _check_missing_data(data_to_check: DataFrame, expected_data_length: int or None) -> bool:
         """Check if there are any missing data depending on the data length
@@ -145,12 +144,20 @@ def get_regional_ts_comparison(data: DataFrame, method: str, preproc: list or No
 
     proc_ts = {}
     expected_data_length = None
+
+    unique_dates = data["week_end_date"].unique()
     for proc_region in unique_regions:
 
         proc_data = data[data["Region"] == proc_region]
-        proc_ts[proc_region] = data_preproc(
-            proc_data.sort_values("week_end_date")[["week_end_date", "case_7d_avg"]].reset_index(
+        proc_data_out = data_preproc(
+            proc_data.sort_values("week_end_date")[
+                ["week_end_date", "copies_per_day_per_person"]].reset_index(
             drop=True), preproc)
+        proc_data_out.set_index("week_end_date", inplace=True)
+        proc_data_out = proc_data_out.reindex(unique_dates)
+
+        proc_ts[proc_region] = proc_data_out.interpolate(method=missing_fill_method)
+
 
         if expected_data_length is None:
             expected_data_length = len(proc_ts[proc_region])
@@ -179,15 +186,17 @@ def get_regional_ts_comparison(data: DataFrame, method: str, preproc: list or No
                 proc_index = selected_data["data"].corr(
                     data_to_be_compared["data"])
             elif method == "mse":
-                proc_index = mean_squared_error(
-                    selected_data["data"], 
-                    data_to_be_compared["data"]
-                )
+                try:
+                    proc_index = mean_squared_error(
+                        selected_data["data"], 
+                        data_to_be_compared["data"]
+                    )
+                except:
+                    x = 3
             elif method == "dtw":
                 proc_index = dtw(
                     selected_data["data"].values.tolist(), 
                     data_to_be_compared["data"].values.tolist())
-
 
             output["index"][i, j] = proc_index
 

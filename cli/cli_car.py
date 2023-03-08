@@ -61,8 +61,8 @@ def run(workdir: str, cfg: str):
     args = construct_inputs(workdir, cfg["start"], cfg["end"], cfg["regions"])
 
     logger.info("getting required ww and case data ...")
-    ww = process_ww(data_filter(obtain_latest_data(data_name="ww") , args))
-    case = data_filter(obtain_latest_data() , args)
+    ww = process_ww(data_filter(obtain_latest_data(data_name="ww", data_type="national") , args))
+    case = data_filter(obtain_latest_data(data_type="national") , args)
 
     logger.info("Split ww and case data into reference and others ...")
     data = split_ref_data(ww, case, cfg["ref_date"], exclude_ref_data=False)

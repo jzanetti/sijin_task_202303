@@ -94,14 +94,8 @@ def car_prediction(car_data: dict, fcst_method: str, preproc_cfg: list or None) 
                 "data": data_out
         }
 
-
-    all_data = []
-    for proc_region in car_data:
-        proc_car = car_data[proc_region]
-        all_data.append(proc_car)
-    all_data = concat(all_data, ignore_index=True)
-    all_data = all_data.groupby(["week_end_date"]).agg({"car": 'mean'})["car"].reset_index()
-    all_data_ts_before_preproc = TimeSeries.from_dataframe(all_data, time_col= 'week_end_date')
+    all_data_ts_before_preproc = TimeSeries.from_dataframe(
+        car_data[["week_end_date", "car"]], time_col= 'week_end_date')
     all_data_ts = _preproc(all_data_ts_before_preproc, preproc_cfg)
 
     if fcst_method == "tcn":
@@ -117,7 +111,7 @@ def car_prediction(car_data: dict, fcst_method: str, preproc_cfg: list or None) 
     return {"val": val_outs, "prd": prd_outs, "method": fcst_method}
 
 
-def cal_existing_car(data_to_use: dict, constant_k: dict) -> dict:
+def cal_existing_car(data_to_use: dict, constant_k: float) -> dict:
     """Calculating CAR for exisiting records
 
     Args:
@@ -127,21 +121,12 @@ def cal_existing_car(data_to_use: dict, constant_k: dict) -> dict:
     Returns:
         dict: CAR for existing records
     """
-    unique_regions = sorted(data_to_use["ww"]["Region"].unique())
+    proc_ww = data_to_use["ww"]
+    proc_case = data_to_use["case"]
+    merged_df = merge(proc_ww, proc_case, on=["week_end_date"])
+    merged_df["car"] = merged_df["case_7d_avg"] / (merged_df["copies_per_day_per_person"] * constant_k)
 
-    car_data = {}
-    for proc_region in unique_regions:
-        proc_ref_k = constant_k[proc_region]
-
-        proc_ww = data_to_use["ww"][data_to_use["ww"]["Region"] == proc_region]
-        proc_case = data_to_use["case"][data_to_use["case"]["Region"] == proc_region]
-        merged_df = merge(proc_ww, proc_case, on=["week_end_date", "Region"])
-        merged_df["factor"] = merged_df["copies_per_day_per_person"]/ merged_df["case_7d_avg"]
-
-        merged_df["car"] = merged_df["factor"] * proc_ref_k
-        car_data[proc_region] = merged_df
-
-    return car_data
+    return merged_df
 
 
 def obtain_ref_constant(ref_data: dict) -> dict:
@@ -150,13 +135,7 @@ def obtain_ref_constant(ref_data: dict) -> dict:
     Args:
         ref_data (dict): reference data
     """
-    unique_regions = sorted(ref_data["ww"]["Region"].unique())
-
-    constant_k = {}
-    for proc_region in unique_regions:
-        proc_ww = ref_data["ww"][ref_data["ww"]["Region"] == proc_region]
-        proc_case = ref_data["case"][ref_data["case"]["Region"] == proc_region]
-        constant_k[proc_region] = proc_case["case_7d_avg"].values[0] / proc_ww["copies_per_day_per_person"].values[0]
+    constant_k = ref_data["case"]["case_7d_avg"].values[0] / ref_data["ww"]["copies_per_day_per_person"].values[0]
     
     return constant_k
 
@@ -206,6 +185,6 @@ def process_ww(ww: DataFrame) -> DataFrame:
     Returns:
         DataFrame: _description_
     """
-    ww["total_copies"] = ww["copies_per_day_per_person"] * ww["population_covered"]
+    ww["total_copies"] = ww["copies_per_day_per_person"] * ww["national_pop"]
 
     return ww

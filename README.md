@@ -30,9 +30,9 @@ where `CONDA_BASE` is the location where the base _CONDA_ environment is install
 In order to calculate the regional correlations for COVID cases, the following command can be used:
 ```
 conda activate esr_task
-covid_comp --workdir <WORKDIR> [--cfg <CFG>]
+ww --workdir <WORKDIR> [--cfg <CFG>]
 ```
-where `--workdir` is the working directory for the data processing. `--cfg` is used to specify the configuration for `covid_comp`.
+where `--workdir` is the working directory for the data processing. `--cfg` is used to specify the configuration for `ww`.
 
 In the configuration, we can specify:
 
@@ -44,6 +44,8 @@ In the configuration, we can specify:
 - `preproc`: what preprocessing steps to be carried out
   - `norm`: applying min/max scaling on the data
   - `fft`: applying FFT smoothing
+
+- `missing_fill_method`: the method used to fill the missing data in the WW dataset.
 
 - `regions`: regions to be included in the study (if _null_ then all regions will be used)
 
@@ -57,7 +59,7 @@ An example of configuration file can be found at `etc/case_cfg.yml`.
 For instance, we can produce the comparisons for the evolution of COVID cases as:
 ```
 conda activate esr_task
-covid_comp --workdir /tmp/covid_corr --cfg etc/case_cfg.yml
+ww --workdir /tmp/covid_corr --cfg etc/ww_cfg.yml
 ```
 The outputs are saved in `/tmp/covid_corr`.
 
@@ -102,6 +104,7 @@ CAR = (Reported cases / actual total cases) x 100%
 Assuming that the `actual cases` can be extracted based on `copies_per_day_per_person`, as `actual cases = copies_per_day_per_person * k` where `k` is a constant that can be derived from a "ground truth" (e.g., the data obtained at _t0_). Therefore, `CAR` can be estimated using:
 
 ```
+Reported cases(t0) = copies_per_day_per_person (t0) * k(t0)
 CAR(t) = (Reported cases(t) / (copies_per_day_per_person (t) * k(t0)))
 ```
 where `t0` represents the time that we obtain the "truth" (where `estimated cases == actual cases`)

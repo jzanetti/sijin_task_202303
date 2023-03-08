@@ -9,7 +9,7 @@ build:
   script:
     - $PYTHON setup.py install
   entry_points:
-    - covid_comp = cli.cli_covid_comparison:main
+    - ww = cli.cli_ww:main
     - car = cli.cli_car:main
 
 requirements:

@@ -7,7 +7,7 @@ Description:
     This is a wrapper to calculate different statistical properties from regional covid data
 
 Debug:
-    export PYTHONPATH=~/Github/esr_task/env.yml:$PYTHONPATH
+    export PYTHONPATH=~/Github/sijin_task_202303:$PYTHONPATH
 """
 
 import argparse
@@ -41,7 +41,7 @@ def setup_parser():
         help=f"Configuration to be applied")
 
     return parser.parse_args(
-       # [ "--workdir", "/tmp/esr_task_case", "--cfg", "etc/case_cfg.yml"]
+       # [ "--workdir", "/tmp/esr_task_case3", "--cfg", "etc/ww_cfg.yml"]
     )
 
 
@@ -61,11 +61,11 @@ def run(workdir: str, cfg: str):
     args = construct_inputs(workdir, cfg["start"], cfg["end"], cfg["regions"])
 
     logger.info("Data preprocessing ...")
-    data = data_filter(obtain_latest_data() , args)
+    data = data_filter(obtain_latest_data(data_name="ww") , args)
 
     logger.info("Get regional comparison ...")
     comp_results = get_regional_ts_comparison(
-        data, cfg["method"], cfg["preproc"])
+        data, cfg["method"], cfg["preproc"], cfg["missing_fill_method"])
 
     if cfg["vis"]:
         logger.info("Creating plots ...")

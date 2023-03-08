@@ -50,22 +50,16 @@ def car_ts(workdir: str, car_data: dict, figsize: tuple = (15, 10), filename: st
         figsize (tuple, optional): figure size. Defaults to (15, 10).
         filename (str, optional): filename to be used. Defaults to "cas.png".
     """
-    all_data = []
     _, ax1 = subplots(figsize=figsize)
-    for proc_region in car_data:
-        proc_car = car_data[proc_region]
-        all_data.append(proc_car)
-        proc_car.plot(x="week_end_date", y="car", ax=ax1, label=proc_region)
-    all_data = concat(all_data, ignore_index=True)
-    mean_car = all_data.groupby("week_end_date")["car"].mean()
-    mean_car.plot(x="week_end_date", ax=ax1, linewidth=10, label="Nationwide")
+
+    car_data.plot(x="week_end_date", y="car", ax=ax1, linewidth=10, label="Nationwide")
     ax1.set_xlabel('Date', fontsize=fontsize)
     ax1.set_ylabel('CAR', fontsize=fontsize)
     ax1.tick_params(axis='both', which='major', labelsize=fontsize)
-    ax1.plot([0, len(mean_car)], [1.0, 1.0], linewidth=5, color="k")
+    ax1.plot([0, len(car_data)], [1.0, 1.0], linewidth=5, color="k")
     ax1.yaxis.set_major_formatter(mtick.PercentFormatter(xmax=1, decimals=0))
     title(f"Regional and national wide CAR estimation \n "
-          f"between {min(all_data['week_end_date'])} and {max(all_data['week_end_date'])}", fontsize=fontsize)
+          f"between {min(car_data['week_end_date'])} and {max(car_data['week_end_date'])}", fontsize=fontsize)
     savefig(join(workdir, filename), bbox_inches="tight")
     close()
 
@@ -106,21 +100,21 @@ def case_ts(workdir: str, corr_output: dict, figsize: tuple = (15, 10), filename
     ax2 = ax1.twinx()
 
     for i, proc_region in enumerate(corr_output["regions"]):
-        proc_cases = corr_output["proc_ts"][proc_region]["case_7d_avg"]
+        proc_cases = corr_output["proc_ts"][proc_region]["copies_per_day_per_person"]
         proc_cases_norm = corr_output["proc_ts"][proc_region]["data"]
 
         ax1.plot(proc_cases, color=REGIONAL_COLORS[i], linestyle = "-", label=proc_region, linewidth=3.0)
         ax2.plot(proc_cases_norm, color=REGIONAL_COLORS[i], linestyle = "--", alpha=1.0, linewidth=1.0)
 
-    ax1.set_ylabel("Number of cases: solid line")
-    ax2.set_ylabel("Number of cases (after preprocessing): dashed line")
+    ax1.set_ylabel("Number of copies: solid line")
+    ax2.set_ylabel("Number of copies (after preprocessing): dashed line")
     ax1.set_xlabel("Date")
 
-    ax1.set_xticks(range(0, len(proc_cases), 5))
-    ax1.set_xticklabels([dt.strftime("%Y%m") for dt in corr_output['dates']][::5], rotation=45.0)
+    #ax1.set_xticks(range(0, len(proc_cases), 5))
+    #ax1.set_xticklabels([dt.strftime("%Y%m") for dt in corr_output['dates']][::5], rotation=45.0)
 
     ax1.legend()
-    ax1.set_title(f"COVID cases in New Zealand \n "
+    ax1.set_title(f"SARS-CoV-2 genome copies per person in New Zealand \n "
         f"between {corr_output['dates'][0].strftime('%Y%m%d')} and "
         f"{corr_output['dates'][1].strftime('%Y%m%d')}")
     savefig(join(workdir, filename), bbox_inches="tight")
