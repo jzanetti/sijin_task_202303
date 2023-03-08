@@ -1,0 +1,39 @@
+# -------------------
+# Which method to be used 
+# Choose from:
+#  - corr: standard correlation coefficient (pearson)
+#  - dtw: dynamic time warping
+#  - mse: mean square error
+# -------------------
+method: corr
+
+# -------------------
+# Preprocessing: the following steps can be added:
+#   - norm: standard min/max normalization
+#   - fft: fourier transfer
+# -------------------
+preproc:
+  - norm
+  - fft
+
+# -------------------
+# Regions to be included in the study
+# if null then all regions will be used
+# -------------------
+regions: null
+
+# -------------------
+# Dates to be included in the study
+#   - start: when the data starts
+#   - end: when the data ends
+# -------------------
+start: 202205
+end: null
+
+
+# -------------------
+# Output controls
+# -------------------
+vis: true
+csv: true
+

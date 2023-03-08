@@ -1,0 +1,31 @@
+ref_date: 20220508
+
+
+# -------------------
+# Regions to be included in the study
+# if null then all regions will be used
+# -------------------
+regions: null
+
+# -------------------
+# Dates to be included in the study
+#   - start: when the data starts
+#   - end: when the data ends
+# -------------------
+start: 202205
+end: null
+
+# -------------------
+# Forecast method:
+# Choose from linear (linear regression), rf (random forest) and tcn
+# -------------------
+fcst_method: rf
+preproc:
+  - norm
+
+# -------------------
+# Validation metrics
+# Choose from rmse [others are not implemented yet]
+# -------------------
+val_metrics:
+  - rmse
