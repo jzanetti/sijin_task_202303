@@ -25,9 +25,9 @@ where `CONDA_BASE` is the location where the base _CONDA_ environment is install
 
 # 4. Usage:
 
-## 4.1 COVID case comparisons:
+## 4.1 Waster Water SARS-CoV-2 Genome Copies Comparisons:
 
-In order to calculate the regional correlations for COVID cases, the following command can be used:
+In order to calculate the regional correlations for COVID genome copies, the following command can be used:
 ```
 conda activate esr_task
 ww --workdir <WORKDIR> [--cfg <CFG>]
@@ -53,7 +53,7 @@ In the configuration, we can specify:
 
 - `vis`/`csv`: output controls (if producing _figure_ or _csv_).
 
-An example of configuration file can be found at `etc/case_cfg.yml`.
+An example of configuration file can be found at `etc/ww_cfg.yml`.
 
 
 For instance, we can produce the comparisons for the evolution of COVID cases as:
@@ -101,7 +101,7 @@ It is understood that:
 CAR = (Reported cases / actual total cases) x 100%
 ```
 
-Assuming that the `actual cases` can be extracted based on `copies_per_day_per_person`, as `actual cases = copies_per_day_per_person * k` where `k` is a constant that can be derived from a "ground truth" (e.g., the data obtained at _t0_). Therefore, `CAR` can be estimated using:
+Assuming that the `actual cases` can be derived based on `copies_per_day_per_person`, as `actual cases = copies_per_day_per_person * k` where `k` is a constant that can be obtained from a "ground truth" (e.g., the data obtained at _t0_). Therefore, `CAR` can be estimated using:
 
 ```
 Reported cases(t0) = copies_per_day_per_person (t0) * k(t0)

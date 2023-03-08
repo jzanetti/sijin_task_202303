@@ -175,7 +175,6 @@ def split_ref_data(ww: DataFrame, case: DataFrame, ref_date: datetime, exclude_r
     }
 
 
-
 def process_ww(ww: DataFrame) -> DataFrame:
     """Obtain total copies from WW data
 
