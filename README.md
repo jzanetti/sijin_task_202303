@@ -29,6 +29,7 @@ where `CONDA_BASE` is the location where the base _CONDA_ environment is install
 
 In order to calculate the regional correlations for COVID cases, the following command can be used:
 ```
+conda activate esr_task
 covid_comp --workdir <WORKDIR> [--cfg <CFG>]
 ```
 where `--workdir` is the working directory for the data processing. `--cfg` is used to specify the configuration for `covid_comp`.
@@ -56,7 +57,7 @@ An example of configuration file can be found at `etc/case_cfg.yml`.
 For instance, we can produce the comparisons for the evolution of COVID cases as:
 ```
 conda activate esr_task
-covid_corr --workdir /tmp/covid_corr --cfg etc/case_cfg.yml
+covid_comp --workdir /tmp/covid_corr --cfg etc/case_cfg.yml
 ```
 The outputs are saved in `/tmp/covid_corr`.
 
@@ -64,6 +65,7 @@ The outputs are saved in `/tmp/covid_corr`.
 
 **CAR** can be estimated and predicted using the following method:
 ```
+conda activate esr_task
 carr --workdir <WORKDIR> [--cfg <CFG>]
 ```
 where `--workdir` is the working directory, and `--cfg` is the configuration.
