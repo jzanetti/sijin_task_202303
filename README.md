@@ -1,7 +1,6 @@
 # 1. Purpose:
 
-
-This repository is used to analyze the wastewater (WW) samples and the reported number of COVID-19 cases from early 2022 to date. The data is provided by [ESR](https://github.com/ESR-NZ/covid_in_wastewater), and funded by the [Ministry of Health](https://www.health.govt.nz).
+This repository analyzes the relationship between wastewater (WW) samples and reported COVID-19 cases from early 2022 to present. The data is provided by [ESR](https://github.com/ESR-NZ/covid_in_wastewater), and funded by the [Ministry of Health](https://www.health.govt.nz).
 
 # 2. Data source:
 
